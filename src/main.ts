@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = process.env.PORT || 8000;
+  const port = process.env.PORT || 3001;
 
   // Pipes
   app.useGlobalPipes(
@@ -15,7 +15,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors();
-  await app.listen(port);
+  await app.listen(port, () => console.log(`Rodando na porta ${port}`));
 }
 
 bootstrap();
