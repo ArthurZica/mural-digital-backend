@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model aviso {
+  idaviso             Int        @id @default(autoincrement())
+  recorrente          Boolean?    @db.Boolean
+  dtinicio            DateTime?  @db.Timestamp(6)
+  dtfim               DateTime?  @db.Timestamp(6)
+  prioridade          Boolean?    @db.Boolean
+  texto               String?    @db.VarChar(255)
+  fk_pessoa_matricula Int?
+  arquivo             String?    @db.VarChar(255)
+  pessoa              pessoa?    @relation(fields: [fk_pessoa_matricula], references: [matricula], onDelete: Cascade, onUpdate: NoAction, map: "fk_aviso_2")
+  pertence            pertence[] @ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model leciona {
+  fk_pessoa_matricula Int?
+  fk_turma_idturma    Int?
+  pessoa              pessoa? @relation(fields: [fk_pessoa_matricula], references: [matricula], onDelete: Restrict, onUpdate: NoAction, map: "fk_leciona_1")
+  turma               turma?  @relation(fields: [fk_turma_idturma], references: [idturma], onUpdate: NoAction, map: "fk_leciona_2")
+
+  @@ignore
+}
+
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model log {
+// }
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model pertence {
+  fk_turma_idturma Int?
+  fk_aviso_idaviso Int?
+  turma            turma? @relation(fields: [fk_turma_idturma], references: [idturma], onDelete: Restrict, onUpdate: NoAction, map: "fk_pertence_1")
+  aviso            aviso? @relation(fields: [fk_aviso_idaviso], references: [idaviso], onUpdate: NoAction, map: "fk_pertence_2")
+
+  @@ignore
+}
+
+model pessoa {
+  matricula           Int       @id
+  nome                String?   @db.VarChar
+  email               String?   @db.VarChar
+  senha               String?   @db.VarChar
+  pessoa_tipo         Int?
+  fk_pessoa_matricula Int?
+  fk_turma_idturma    Int?
+  aviso               aviso[]
+  leciona             leciona[] @ignore
+  pessoa              pessoa?   @relation("pessoaTopessoa", fields: [fk_pessoa_matricula], references: [matricula], onDelete: NoAction, onUpdate: NoAction, map: "fk_pessoa_1")
+  other_pessoa        pessoa[]  @relation("pessoaTopessoa")
+  turma               turma?    @relation(fields: [fk_turma_idturma], references: [idturma], onDelete: Restrict, onUpdate: NoAction, map: "fk_pessoa_3")
+  postar              postar[]  @ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model postar {
+  fk_pessoa_matricula    Int?
+  fk_trabalho_idtrabalho Int?
+  pessoa                 pessoa?   @relation(fields: [fk_pessoa_matricula], references: [matricula], onDelete: Restrict, onUpdate: NoAction, map: "fk_postar_1")
+  trabalho               trabalho? @relation(fields: [fk_trabalho_idtrabalho], references: [idtrabalho], onUpdate: NoAction, map: "fk_postar_2")
+
+  @@ignore
+}
+
+model trabalho {
+  titulo     String?  @db.VarChar
+  idtrabalho Int      @id
+  postar     postar[] @ignore
+}
+
+model turma {
+  idturma    Int        @id
+  gruposerie String?    @db.VarChar
+  serie      String?    @db.VarChar
+  leciona    leciona[]  @ignore
+  pertence   pertence[] @ignore
+  pessoa     pessoa[]
+}
