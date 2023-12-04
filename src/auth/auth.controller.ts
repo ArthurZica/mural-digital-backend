@@ -31,10 +31,12 @@ export class AuthController {
   @Get('me')
   async getUser(@Res() res: Response, @CurrentUser() user: User) {
     if (user) {
+      console.log(user);
       res.status(200).send({
         nome: user.nome,
         pessoa_tipo: user.pessoa_tipo,
         matricula: user.matricula,
+        fk_turma_idturma: user.fk_turma_idturma,
       });
     } else {
       res.status(401).send({ message: 'usuario não encontrado' });

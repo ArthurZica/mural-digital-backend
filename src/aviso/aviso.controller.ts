@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, Post, Body } from '@nestjs/common';
+import { Controller, Get, Req, Res, Post, Body, Query } from '@nestjs/common';
 import { Response } from 'express';
 import { AvisoService } from './aviso.service';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -14,8 +14,33 @@ export class AvisoController {
     @Res() res: Response,
     @CurrentUser() user: User,
   ) {
-    await this.avisoService.getAvisos(res);
+    console.log('aaaaaaaaaaa', user);
+    if (user.pessoa_tipo == 0) {
+      await this.avisoService.getAvisos(res);
+    } else {
+      await this.avisoService.getAllAvisos(user.fk_turma_idturma, res);
+    }
     console.log(user);
+  }
+
+  @Get('turma')
+  async getAvisosByTurma(
+    @Res() res: Response,
+    @CurrentUser() user: User,
+    @Query('id') id: number,
+  ) {
+    console.log('iddddddddddd', id);
+    if (user.pessoa_tipo == 0) {
+      return this.avisoService.getAvisosByTurma(id, res);
+    }
+    if (user.fk_turma_idturma == id) {
+      return this.avisoService.getAvisosByTurma(id, res);
+    }
+    if (user.fk_turma_idturma !== id) {
+      return res.status(401).json({
+        message: 'Você não tem permissão para ver os avisos dessa turma!',
+      });
+    }
   }
 
   @Post()

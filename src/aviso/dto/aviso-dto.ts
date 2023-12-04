@@ -16,6 +16,9 @@ export class CreateAvisoDto {
   @IsString()
   texto: string;
 
+  @IsString()
+  titulo: string;
+
   @IsOptional()
   @IsDateString()
   dtinicio?: Date;
@@ -30,4 +33,8 @@ export class CreateAvisoDto {
   @IsOptional()
   @IsString()
   arquivo?: string;
+
+  @IsOptional()
+  @IsNumber()
+  fk_turma_idturma?: number;
 }

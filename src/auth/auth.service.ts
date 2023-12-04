@@ -20,6 +20,7 @@ export class AuthService {
       email: user.email,
       nome: user.nome,
       pessoa_tipo: user.pessoa_tipo,
+      fk_turma_idturma: user.fk_turma_idturma,
     };
 
     return {

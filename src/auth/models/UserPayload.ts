@@ -6,4 +6,5 @@ export interface UserPayload {
   exp?: number;
   type?: number;
   pessoa_tipo: number;
+  fk_turma_idturma?: number;
 }

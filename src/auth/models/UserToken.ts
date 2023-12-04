@@ -4,4 +4,5 @@ export interface UserToken {
   nome: string;
   matricula: number;
   email: string;
+  fk_turma_idturma?: number;
 }

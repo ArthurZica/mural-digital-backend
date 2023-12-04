@@ -6,6 +6,7 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateUserDto extends User {
@@ -28,4 +29,8 @@ export class CreateUserDto extends User {
 
   @IsNumber()
   pessoa_tipo: number;
+
+  @IsOptional()
+  @IsNumber()
+  fk_turma_idturma?: number;
 }
