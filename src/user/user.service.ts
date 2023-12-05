@@ -43,4 +43,21 @@ export class UserService {
       },
     });
   }
+
+  async getAllUsers() {
+    try {
+      const users = this.prisma.pessoa.findMany({
+        select: {
+          matricula: true,
+          nome: true,
+          email: true,
+          pessoa_tipo: true,
+          fk_turma_idturma: true,
+        },
+      });
+      return users;
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }

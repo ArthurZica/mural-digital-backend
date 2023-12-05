@@ -1,14 +1,21 @@
-import { Body, Controller, /* Get, Param,  */ Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  /* Get, Param,  */ Post,
+  Res,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
-import { IsPublic } from 'src/auth/decorators/is-public.decorator';
+/* import { IsPublic } from 'src/auth/decorators/is-public.decorator'; */
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { User } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @IsPublic()
   @Post()
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     const verify = await this.userService.verifyExists(
@@ -33,5 +40,16 @@ export class UserController {
     if (user) {
       return res.status(201).send({ message: 'Usuario criado com sucesso!' });
     }
+  }
+
+  @Get()
+  async getAllUsers(@Res() res: Response, @CurrentUser() user: User) {
+    if (user.pessoa_tipo !== 0) {
+      return res.status(401).send({
+        message: 'Você não tem permissão para ver todos os usuários!',
+      });
+    }
+    const users = await this.userService.getAllUsers();
+    return res.status(200).send(users);
   }
 }
